@@ -20,7 +20,7 @@ class Task extends Model
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * atributi koji se trebaju konvrtovati
      *
      * @return array<string, string>
      */
@@ -32,9 +32,8 @@ class Task extends Model
         ];
     }
 
-    /**
-     * povezivanje sa korisnikom
-     */
+    //povezivanje sa korisnikom
+    
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
