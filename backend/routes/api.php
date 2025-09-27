@@ -29,5 +29,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('notes', NoteController::class);
     
     // zadaci posle
-    //Route::apiResource('tasks', TaskController::class);
+    Route::apiResource('tasks', TaskController::class);
 });
