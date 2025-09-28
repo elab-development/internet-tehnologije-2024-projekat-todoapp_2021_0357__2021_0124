@@ -9,11 +9,24 @@ use Illuminate\Support\Facades\Validator;
 class TaskController extends Controller
 {
     /**
-     * prikaz svih zadataka ulogovanog korisnika sa paginacijom
+     * prikaz svih zadataka ulogovanog korisnika sa paginacijom, filtriranjem i pretragom
      */
     public function index(Request $request)
     {
-        $tasks = $request->user()->tasks()->paginate(10);
+        $query = $request->user()->tasks();
+
+        // ovde filtrira po tome da li je zavrsen ili ne
+        if ($request->has('completed')) {
+            $completed = filter_var($request->completed, FILTER_VALIDATE_BOOLEAN);
+            $query->where('is_completed', $completed);
+        }
+
+        // ovde pretrazuje po naslovu
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        $tasks = $query->paginate(10);
         
         return response()->json([
             'message' => 'Zadaci uspešno učitani',
