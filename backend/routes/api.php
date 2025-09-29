@@ -35,4 +35,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/test', function () {
         return response()->json(['message' => 'Korisnik je admin']);
     })->middleware('admin');
+    
+    // nested ruta za admin pristup beleškama bilo kog korisnika
+    Route::get('/users/{user}/notes', [NoteController::class, 'NotesOdUser'])
+        ->middleware('admin');
+    
+    // nested ruta za admin pristup zadacima bilo kog korisnika
+    Route::get('/users/{user}/tasks', [TaskController::class, 'TasksOdUser'])
+        ->middleware('admin');
 });

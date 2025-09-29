@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -132,6 +133,19 @@ class TaskController extends Controller
 
         return response()->json([
             'message' => 'Zadatak uspešno obrisan'
+        ]);
+    }
+
+    //citanje zadataka za određenog korisnika (ali admin funkcija)
+    
+    public function TasksOdUser(User $user)
+    {
+        $tasks = $user->tasks()->paginate(10);
+        
+        return response()->json([
+            'message' => "Zadaci korisnika {$user->name} uspešno učitani",
+            'user' => $user,
+            'data' => $tasks
         ]);
     }
 }

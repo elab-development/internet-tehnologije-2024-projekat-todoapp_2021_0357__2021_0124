@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Note;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -117,6 +118,19 @@ class NoteController extends Controller
 
         return response()->json([
             'message' => 'Beleška uspešno obrisana'
+        ]);
+    }
+
+    // čitanje beleški za određenog korisnika (ali admin funkcija)
+
+    public function NotesOdUser(User $user)
+    {
+        $notes = $user->notes()->paginate(10);
+        
+        return response()->json([
+            'message' => "Beleške korisnika {$user->name} uspešno učitane",
+            'user' => $user,
+            'data' => $notes
         ]);
     }
 }
