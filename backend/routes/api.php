@@ -30,4 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // zadaci posle
     Route::apiResource('tasks', TaskController::class);
+    
+    // proba za admin midlver
+    Route::get('/admin/test', function () {
+        return response()->json(['message' => 'Korisnik je admin']);
+    })->middleware('admin');
 });
