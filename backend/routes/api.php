@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\TaskController;
@@ -20,6 +21,9 @@ use Illuminate\Support\Facades\Route;
 // rute za autentifikaciju
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// javne ruta
+Route::get('/random-activity', [ActivityController::class, 'getRandomActivity']);
 
 // zaštićene rute
 Route::middleware('auth:sanctum')->group(function () {
