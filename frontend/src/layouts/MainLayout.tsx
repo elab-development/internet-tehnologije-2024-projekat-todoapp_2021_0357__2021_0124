@@ -6,10 +6,10 @@ const MainLayout = () => {
     <div>
       {/* navigacija */}
       <nav>
-        <Link to="/">Home</Link> | 
-        <Link to="/notes">Notes</Link> | 
-        <Link to="/tasks">Tasks</Link> | 
-        <button>Logout</button>
+        <Link to="/">Početna</Link> | 
+        <Link to="/notes">Beleške</Link> | 
+        <Link to="/tasks">Zadaci</Link> | 
+        <button>Odjava</button>
       </nav>
       
       {/* saaadržaaaj */}
