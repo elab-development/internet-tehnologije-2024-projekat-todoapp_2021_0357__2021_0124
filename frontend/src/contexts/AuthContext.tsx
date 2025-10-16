@@ -3,7 +3,7 @@ import React, { createContext, useState, useEffect, type ReactNode } from 'react
 interface AuthContextType {
   user: any; // Definisacemo kasnije User model
   token: string | null;
-  login: (data: any) => void;
+  login: (userData: any, token: string) => void;
   register: (data: any) => void;
   logout: () => void;
 }
@@ -22,8 +22,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  const login = (data: any) => {
-    // Dodati posle login kod
+  const login = (userData: any, userToken: string) => {
+    setUser(userData);
+    setToken(userToken);
+    localStorage.setItem('token', userToken);
   };
 
   const register = (data: any) => {
