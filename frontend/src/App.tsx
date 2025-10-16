@@ -16,7 +16,6 @@ function App() {
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
         </Route>
-        
         {/* rute za ulogovane korisnike */}
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
