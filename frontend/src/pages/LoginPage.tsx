@@ -17,11 +17,24 @@ const LoginPage: React.FC = () => {
     setError(null);
     try {
       const response = await authService.login({ email, password });
-      auth.login(response.data.user, response.data.token);
-      navigate('/');
-    } catch (err) {
-      setError('Prijava neuspešna. Proverite podatke.');
-      console.error(err);
+      console.log('Login response:', response);
+      console.log('Response data:', response.data);
+      
+      if (response.data && response.data.user && response.data.token) {
+        auth.login(response.data.user, response.data.token);
+        navigate('/');
+      } else {
+        setError('Neočekivani odgovor od servera.');
+      }
+    } catch (err: any) {
+      console.error('Login error:', err);
+      console.error('Error response:', err.response);
+      
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError('Prijava neuspešna. Proverite podatke.');
+      }
     }
   };
 
