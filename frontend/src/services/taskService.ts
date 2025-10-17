@@ -27,19 +27,20 @@ export interface UpdateTaskData {
 // funkcija za dobavljanje svih zadataka
 export const getTasks = async (): Promise<Task[]> => {
   const response = await api.get('/tasks');
-  return response.data;
+  // Backend vraća paginirane podatke, uzimamo samo data array
+  return response.data.data.data;
 };
 
 // funkcija za kreiranje novog zadatka
 export const createTask = async (taskData: CreateTaskData): Promise<Task> => {
   const response = await api.post('/tasks', taskData);
-  return response.data;
+  return response.data.data;
 };
 
 // funkcija za ažuriranje zadatka
 export const updateTask = async (id: number, taskData: UpdateTaskData): Promise<Task> => {
   const response = await api.put(`/tasks/${id}`, taskData);
-  return response.data;
+  return response.data.data;
 };
 
 // funkcija za brisanje zadatka
@@ -50,5 +51,5 @@ export const deleteTask = async (id: number): Promise<void> => {
 // funkcija za dobavljanje jednog zadatka po id
 export const getTaskById = async (id: number): Promise<Task> => {
   const response = await api.get(`/tasks/${id}`);
-  return response.data;
+  return response.data.data;
 };
