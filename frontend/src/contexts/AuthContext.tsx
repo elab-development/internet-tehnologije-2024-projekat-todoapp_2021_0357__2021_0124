@@ -32,8 +32,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Registracija kod
   };
 
-  const logout = () => {
-    // Logout kod
+  const logout = async () => {
+    try {
+      // brisanje tokena na serveru
+      if (token) {
+        await fetch('http://localhost:8080/api/logout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Logout API error:', error);
+    } finally {
+      // brisanje brisanje tokena i korisnika iz localStorage
+      localStorage.removeItem('token');
+      setUser(null);
+      setToken(null);
+    }
   };
 
   return (

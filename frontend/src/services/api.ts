@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// izbacila sam withCredentials jer ne radi kako treba
+// izbacila ovde withCredentials jer ne radi kako treba
 const api = axios.create({
   baseURL: 'http://localhost:8080/api',
   headers: {

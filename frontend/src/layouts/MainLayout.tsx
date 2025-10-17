@@ -1,7 +1,15 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 // layout za stranice gde je korisnik ulogovan
 const MainLayout = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
   return (
     <div className="w-full min-h-screen bg-gray-50 dark:bg-gray-800">
       {/* navigacija */}
@@ -35,7 +43,13 @@ const MainLayout = () => {
               >
                 Zadaci
               </Link>
+              {user && (
+                <span className="text-gray-700 px-3 py-2 text-sm font-medium dark:text-gray-300">
+                  {user.name}
+                </span>
+              )}
               <button
+                onClick={handleLogout}
                 className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-red-400"
               >
                 Odjava
