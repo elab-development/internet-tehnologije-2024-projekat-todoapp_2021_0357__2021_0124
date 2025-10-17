@@ -10,6 +10,8 @@ import NotesPage from './pages/NotesPage';
 import TasksPage from './pages/TasksPage';
 import CreateTaskPage from './pages/CreateTaskPage';
 import EditTaskPage from './pages/EditTaskPage';
+import CreateNotePage from './pages/CreateNotePage';
+import EditNotePage from './pages/EditNotePage';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/app" element={<AppHomePage />} />
           <Route path="/app/notes" element={<NotesPage />} />
+          <Route path="/app/notes/create" element={<CreateNotePage />} />
+          <Route path="/app/notes/edit/:id" element={<EditNotePage />} />
           <Route path="/app/tasks" element={<TasksPage />} />
           <Route path="/app/tasks/create" element={<CreateTaskPage />} />
           <Route path="/app/tasks/edit/:id" element={<EditTaskPage />} />
