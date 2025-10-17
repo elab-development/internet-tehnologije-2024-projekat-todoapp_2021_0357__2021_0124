@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import * as authService from '../services/authService';
@@ -22,7 +22,7 @@ const LoginPage: React.FC = () => {
       
       if (response.data && response.data.user && response.data.token) {
         auth.login(response.data.user, response.data.token);
-        navigate('/');
+        navigate('/app');
       } else {
         setError('Neočekivani odgovor od servera.');
       }
@@ -39,10 +39,10 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
             Prijavite se na nalog
           </h2>
         </div>
@@ -78,6 +78,18 @@ const LoginPage: React.FC = () => {
             </Button>
           </div>
         </form>
+        
+        <div className="mt-6 text-center">
+          <p className="text-gray-600 dark:text-gray-300">
+            Nemate nalog?{' '}
+            <Link 
+              to="/register" 
+              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+            >
+              Registrujte se!
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

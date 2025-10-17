@@ -38,7 +38,7 @@ const RegisterPage: React.FC = () => {
       if (response.data && response.data.user && response.data.token) {
         // Automatski prijavi korisnika nakon registracije
         auth.login(response.data.user, response.data.token);
-        navigate('/');
+        navigate('/app');
       } else {
         setError('Neočekivani odgovor od servera.');
       }
@@ -55,10 +55,10 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
             Kreirajte novi nalog
           </h2>
         </div>
