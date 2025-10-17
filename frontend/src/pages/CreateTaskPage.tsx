@@ -85,7 +85,7 @@ const CreateTaskPage: React.FC = () => {
               onChange={(e) => setDueDate(e.target.value)}
             />
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Rok je opcion - možete ga postaviti kasnije
+              Rok je opcionalan i može se postaviti kasnije
             </p>
           </div>
 

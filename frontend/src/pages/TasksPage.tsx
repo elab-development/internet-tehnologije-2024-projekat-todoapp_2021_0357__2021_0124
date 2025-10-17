@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import { getTasks, type Task } from '../services/taskService';
-import { useAuth } from '../hooks/useAuth';
 
 const TasksPage: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const auth = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchTasks();
@@ -45,8 +44,7 @@ const TasksPage: React.FC = () => {
   };
 
   const handleEditTask = (task: Task) => {
-    // ovo posle dodajem 
-    console.log('Edit task:', task);
+    navigate(`/app/tasks/edit/${task.id}`);
   };
 
   if (loading) {
