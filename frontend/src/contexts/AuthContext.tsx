@@ -28,7 +28,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.setItem('token', userToken);
   };
 
-  const register = (data: any) => {
+  const register = (_data: any) => {
     // Registracija kod
   };
 

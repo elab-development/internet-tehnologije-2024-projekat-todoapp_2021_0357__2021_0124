@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import NoteCard from '../components/NoteCard';
+import NoteViewModal from '../components/NoteViewModal';
 import Button from '../components/Button';
 import { getNotes, type Note } from '../services/noteService';
 
@@ -8,6 +9,8 @@ const NotesPage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,6 +47,16 @@ const NotesPage: React.FC = () => {
 
   const handleEditNote = (note: Note) => {
     navigate(`/app/notes/edit/${note.id}`);
+  };
+
+  const handleViewNote = (note: Note) => {
+    setSelectedNote(note);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedNote(null);
   };
 
   if (loading) {
@@ -123,10 +136,20 @@ const NotesPage: React.FC = () => {
               note={note}
               onEdit={handleEditNote}
               onDelete={handleDeleteNote}
+              onView={handleViewNote}
             />
           ))}
         </div>
       )}
+
+      {/* Note View Modal */}
+      <NoteViewModal
+        note={selectedNote}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onEdit={handleEditNote}
+        onDelete={handleDeleteNote}
+      />
     </div>
   );
 };
