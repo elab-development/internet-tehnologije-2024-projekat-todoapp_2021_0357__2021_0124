@@ -11,10 +11,14 @@ interface UseApiReturn<T> extends UseApiState<T> {
   reset: () => void;
 }
 
-const useApi = <T>(apiCall: () => Promise<T>): UseApiReturn<T> => {
+const useApi = <T>(
+  apiCall: () => Promise<T>,
+  options?: { initialLoading?: boolean }
+): UseApiReturn<T> => {
+  const initialLoading = options?.initialLoading ?? true;
   const [state, setState] = useState<UseApiState<T>>({
     data: null,
-    loading: true,
+    loading: initialLoading,
     error: null,
   });
 
@@ -34,8 +38,8 @@ const useApi = <T>(apiCall: () => Promise<T>): UseApiReturn<T> => {
   }, [apiCall]);
 
   const reset = useCallback(() => {
-    setState({ data: null, loading: true, error: null });
-  }, []);
+    setState({ data: null, loading: initialLoading, error: null });
+  }, [initialLoading]);
 
   return {
     data: state.data,

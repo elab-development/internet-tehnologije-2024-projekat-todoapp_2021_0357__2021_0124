@@ -46,6 +46,12 @@ const MainLayout = () => {
               >
                 Zadaci
               </Link>
+              <Link
+                to="/app/activity"
+                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-blue-400"
+              >
+                Aktivnosti
+              </Link>
               {user && (
                 <span className="text-gray-700 px-3 py-2 text-sm font-medium dark:text-gray-300">
                   {user.name}

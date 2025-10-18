@@ -41,6 +41,9 @@ const Breadcrumbs: React.FC = () => {
         case 'notes':
           label = 'Beleške';
           break;
+        case 'activity':
+          label = 'Aktivnosti';
+          break;
         case 'create':
           if (pathSegments[i - 1] === 'tasks') {
             label = 'Kreiranje zadatka';

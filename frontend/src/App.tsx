@@ -12,6 +12,7 @@ import CreateTaskPage from './pages/CreateTaskPage';
 import EditTaskPage from './pages/EditTaskPage';
 import CreateNotePage from './pages/CreateNotePage';
 import EditNotePage from './pages/EditNotePage';
+import ActivityPage from './pages/ActivityPage';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="/app/tasks" element={<TasksPage />} />
           <Route path="/app/tasks/create" element={<CreateTaskPage />} />
           <Route path="/app/tasks/edit/:id" element={<EditTaskPage />} />
+          <Route path="/app/activity" element={<ActivityPage />} />
         </Route>
       </Route>
     </Routes>
