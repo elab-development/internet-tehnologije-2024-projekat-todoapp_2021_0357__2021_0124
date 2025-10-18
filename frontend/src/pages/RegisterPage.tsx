@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import * as authService from '../services/authService';
@@ -110,6 +110,17 @@ const RegisterPage: React.FC = () => {
             </Button>
           </div>
         </form>
+        <div className="mt-6 text-center">
+          <p className="text-gray-600 dark:text-gray-300">
+            Već imate nalog?{' '}
+            <Link 
+              to="/login" 
+              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+            >
+              Ulogujte se!
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
