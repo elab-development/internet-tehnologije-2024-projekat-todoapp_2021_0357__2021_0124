@@ -2,23 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Card from '../components/Card';
 import Button from '../components/Button';
-import { getTasks, type Task } from '../services/taskService';
+import Input from '../components/Input';
+import { getTasks, type Task, type TaskSearchParams } from '../services/taskService';
 
 const TasksPage: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'incomplete'>('all');
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (searchParams?: TaskSearchParams) => {
     try {
       setLoading(true);
       setError(null);
-      const tasksData = await getTasks();
+      const tasksData = await getTasks(searchParams);
       setTasks(tasksData);
     } catch (err: any) {
       console.error('Error fetching tasks:', err);
@@ -28,10 +31,43 @@ const TasksPage: React.FC = () => {
     }
   };
 
+  const handleSearch = () => {
+    const params: TaskSearchParams = {};
+    
+    if (searchTerm.trim()) {
+      params.search = searchTerm.trim();
+    }
+    
+    if (statusFilter !== 'all') {
+      params.completed = statusFilter === 'completed';
+    }
+    
+    fetchTasks(params);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handleStatusFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setStatusFilter(e.target.value as 'all' | 'completed' | 'incomplete');
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('all');
+    fetchTasks();
+  };
+
   const handleDeleteTask = async (taskId: number) => {
     if (window.confirm('Da li ste sigurni da želite da obrišete ovaj zadatak?')) {
       try {
-        // Importujemo deleteTask funkciju dinamički da izbegnemo circular dependency
         const { deleteTask } = await import('../services/taskService');
         await deleteTask(taskId);
         // Ukloni zadatak iz liste bez ponovnog učitavanja
@@ -71,7 +107,7 @@ const TasksPage: React.FC = () => {
             <p className="text-red-800 dark:text-red-300">{error}</p>
           </div>
           <button
-            onClick={fetchTasks}
+            onClick={() => fetchTasks()}
             className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
           >
             Pokušaj ponovo
@@ -97,6 +133,60 @@ const TasksPage: React.FC = () => {
             Dodaj novi zadatak
           </Button>
         </Link>
+      </div>
+
+      {/* Search and Filter Section */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Search Input */}
+          <div className="md:col-span-2">
+            <Input
+              type="text"
+              label="Pretraži zadatke"
+              placeholder="Unesite naslov zadatka za pretragu..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              onKeyPress={handleKeyPress}
+            />
+          </div>
+          
+          {/* Status Filter */}
+          <div>
+            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
+              Status zadatka
+            </label>
+            <select
+              value={statusFilter}
+              onChange={handleStatusFilterChange}
+              className="shadow appearance-none border border-gray-300 dark:border-gray-600 rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 dark:focus:border-blue-400"
+            >
+              <option value="all">Svi zadaci</option>
+              <option value="completed">Završeni</option>
+              <option value="incomplete">Nezavršeni</option>
+            </select>
+          </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="flex justify-end space-x-3 mt-4">
+          <Button
+            type="button"
+            onClick={clearFilters}
+            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2"
+          >
+            Obriši filtere
+          </Button>
+          <Button
+            type="button"
+            onClick={handleSearch}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            Pretraži
+          </Button>
+        </div>
       </div>
 
       {tasks.length === 0 ? (

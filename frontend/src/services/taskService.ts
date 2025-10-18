@@ -24,9 +24,28 @@ export interface UpdateTaskData {
   due_date?: string;
 }
 
+// Interfejs za parametre pretrage i filtriranja
+export interface TaskSearchParams {
+  search?: string;
+  completed?: boolean;
+}
+
 // funkcija za dobavljanje svih zadataka
-export const getTasks = async (): Promise<Task[]> => {
-  const response = await api.get('/tasks');
+export const getTasks = async (params?: TaskSearchParams): Promise<Task[]> => {
+  const queryParams = new URLSearchParams();
+  
+  if (params?.search) {
+    queryParams.append('search', params.search);
+  }
+  
+  if (params?.completed !== undefined) {
+    queryParams.append('completed', params.completed.toString());
+  }
+  
+  const queryString = queryParams.toString();
+  const url = queryString ? `/tasks?${queryString}` : '/tasks';
+  
+  const response = await api.get(url);
   // Backend vraća paginirane podatke, uzimamo samo data array
   return response.data.data.data;
 };
