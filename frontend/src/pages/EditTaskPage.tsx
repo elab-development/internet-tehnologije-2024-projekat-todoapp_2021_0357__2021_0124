@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { getTaskById, updateTask, type Task, type UpdateTaskData } from '../services/taskService';
@@ -59,10 +60,11 @@ const EditTaskPage: React.FC = () => {
       };
 
       await updateTask(task.id, updateData);
+      toast.success('Zadatak je uspešno ažuriran!');
       navigate('/app/tasks');
     } catch (err: any) {
       console.error('Error updating task:', err);
-      setError('Greška pri ažuriranju zadatka. Molimo pokušajte ponovo.');
+      toast.error('Greška pri ažuriranju zadatka');
     } finally {
       setSubmitting(false);
     }

@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import GuestLayout from './layouts/GuestLayout';
 import MainLayout from './layouts/MainLayout';
 import ProtectedRoute from './layouts/ProtectedRoute';
@@ -16,30 +17,33 @@ import ActivityPage from './pages/ActivityPage';
 
 function App() {
   return (
-    <Routes>
-      {/* javna početna stranica */}
-      <Route path="/" element={<HomePage />} />
+    <>
+      <Routes>
+        {/* javna početna stranica */}
+        <Route path="/" element={<HomePage />} />
 
-      {/* Rute za goste (neregistrovane korisnike) */}
-      <Route element={<GuestLayout />}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Route>
-
-      {/* zaštićene rute za prijavljene korisnike */}
-      <Route element={<ProtectedRoute />}>
-        <Route element={<MainLayout />}>
-          <Route path="/app" element={<AppHomePage />} />
-          <Route path="/app/notes" element={<NotesPage />} />
-          <Route path="/app/notes/create" element={<CreateNotePage />} />
-          <Route path="/app/notes/edit/:id" element={<EditNotePage />} />
-          <Route path="/app/tasks" element={<TasksPage />} />
-          <Route path="/app/tasks/create" element={<CreateTaskPage />} />
-          <Route path="/app/tasks/edit/:id" element={<EditTaskPage />} />
-          <Route path="/app/activity" element={<ActivityPage />} />
+        {/* Rute za goste (neregistrovane korisnike) */}
+        <Route element={<GuestLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Route>
-      </Route>
-    </Routes>
+
+        {/* zaštićene rute za prijavljene korisnike */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path="/app" element={<AppHomePage />} />
+            <Route path="/app/notes" element={<NotesPage />} />
+            <Route path="/app/notes/create" element={<CreateNotePage />} />
+            <Route path="/app/notes/edit/:id" element={<EditNotePage />} />
+            <Route path="/app/tasks" element={<TasksPage />} />
+            <Route path="/app/tasks/create" element={<CreateTaskPage />} />
+            <Route path="/app/tasks/edit/:id" element={<EditTaskPage />} />
+            <Route path="/app/activity" element={<ActivityPage />} />
+          </Route>
+        </Route>
+      </Routes>
+      <Toaster position="top-right" />
+    </>
   );
 }
 

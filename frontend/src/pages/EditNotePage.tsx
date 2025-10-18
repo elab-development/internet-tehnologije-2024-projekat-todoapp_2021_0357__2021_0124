@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { getNoteById, updateNote, type Note, type UpdateNoteData } from '../services/noteService';
@@ -61,10 +62,11 @@ const EditNotePage: React.FC = () => {
       };
 
       await updateNote(note.id, updateData);
+      toast.success('Beleška je uspešno ažurirana!');
       navigate('/app/notes');
     } catch (err: any) {
       console.error('Error updating note:', err);
-      setError('Greška pri ažuriranju beleške. Molimo pokušajte ponovo.');
+      toast.error('Greška pri ažuriranju beleške');
     } finally {
       setSubmitting(false);
     }

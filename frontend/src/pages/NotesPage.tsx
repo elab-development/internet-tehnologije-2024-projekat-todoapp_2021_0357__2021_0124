@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import NoteCard from '../components/NoteCard';
 import NoteViewModal from '../components/NoteViewModal';
 import Button from '../components/Button';
@@ -50,11 +51,12 @@ const NotesPage: React.FC = () => {
       try {
         const { deleteNote } = await import('../services/noteService');
         await deleteNote(noteId);
+        toast.success('Beleška je uspešno obrisana!');
         // ponovo učitaj beleške nakon brisanja
         execute();
       } catch (err: any) {
         console.error('Error deleting note:', err);
-        // error će biti prikazan kroz useApi hook
+        toast.error('Greška pri brisanju beleške');
       }
     }
   };

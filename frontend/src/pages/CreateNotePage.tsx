@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { createNote, type CreateNoteData } from '../services/noteService';
@@ -34,10 +35,11 @@ const CreateNotePage: React.FC = () => {
       };
 
       await createNote(noteData);
+      toast.success('Beleška je uspešno kreirana!');
       navigate('/app/notes');
     } catch (err: any) {
       console.error('Error creating note:', err);
-      setError('Greška pri kreiranju beleške. Molimo pokušajte ponovo.');
+      toast.error('Greška pri kreiranju beleške');
     } finally {
       setLoading(false);
     }

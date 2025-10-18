@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { createTask, type CreateTaskData } from '../services/taskService';
@@ -29,10 +30,11 @@ const CreateTaskPage: React.FC = () => {
       };
 
       await createTask(taskData);
+      toast.success('Zadatak je uspešno kreiran!');
       navigate('/app/tasks');
     } catch (err: any) {
       console.error('Error creating task:', err);
-      setError('Greška pri kreiranju zadatka. Molimo pokušajte ponovo.');
+      toast.error('Greška pri kreiranju zadatka');
     } finally {
       setLoading(false);
     }

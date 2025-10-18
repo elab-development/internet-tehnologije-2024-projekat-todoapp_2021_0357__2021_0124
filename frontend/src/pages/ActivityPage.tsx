@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import Button from '../components/Button';
 import useApi from '../hooks/useApi';
 import { getRandomActivity, type Activity } from '../services/activityService';
@@ -28,10 +29,11 @@ const ActivityPage: React.FC = () => {
       await createTask({
         title: activity.activity,
       });
+      toast.success('Aktivnost je dodata u zadatke!');
       navigate('/app/tasks');
     } catch (err: any) {
       console.error('Error creating task:', err);
-      alert('Greška pri dodavanju aktivnosti u zadatke');
+      toast.error('Greška pri dodavanju aktivnosti u zadatke');
     } finally {
       setIsCreatingTask(false);
     }
