@@ -28,10 +28,20 @@ export interface UpdateTaskData {
 export interface TaskSearchParams {
   search?: string;
   completed?: boolean;
+  page?: number;
+}
+
+// interfejs za paginaciju
+export interface PaginatedResponse<T> {
+  data: T[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
 }
 
 // funkcija za dobavljanje svih zadataka
-export const getTasks = async (params?: TaskSearchParams): Promise<Task[]> => {
+export const getTasks = async (params?: TaskSearchParams): Promise<PaginatedResponse<Task>> => {
   const queryParams = new URLSearchParams();
   
   if (params?.search) {
@@ -42,12 +52,22 @@ export const getTasks = async (params?: TaskSearchParams): Promise<Task[]> => {
     queryParams.append('completed', params.completed.toString());
   }
   
+  if (params?.page) {
+    queryParams.append('page', params.page.toString());
+  }
+  
   const queryString = queryParams.toString();
   const url = queryString ? `/tasks?${queryString}` : '/tasks';
   
   const response = await api.get(url);
-  // Backend vraća paginirane podatke, uzimamo samo data array
-  return response.data.data.data;
+  // Backend vraća paginirane podatke,
+  return {
+    data: response.data.data.data,
+    current_page: response.data.data.current_page,
+    last_page: response.data.data.last_page,
+    per_page: response.data.data.per_page,
+    total: response.data.data.total,
+  };
 };
 
 // funkcija za kreiranje novog zadatka

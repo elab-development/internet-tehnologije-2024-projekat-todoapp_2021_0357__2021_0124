@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import NoteCard from '../components/NoteCard';
 import NoteViewModal from '../components/NoteViewModal';
 import Button from '../components/Button';
-import { getNotes, type Note } from '../services/noteService';
+import Pagination from '../components/Pagination';
+import { getNotes, type Note, type NoteSearchParams, type PaginatedResponse } from '../services/noteService';
 
 const NotesPage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -11,18 +12,36 @@ const NotesPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<{
+    current_page: number;
+    last_page: number;
+    total: number;
+  }>({
+    current_page: 1,
+    last_page: 1,
+    total: 0,
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchNotes();
   }, []);
 
-  const fetchNotes = async () => {
+  const fetchNotes = async (searchParams?: NoteSearchParams, page?: number) => {
     try {
       setLoading(true);
       setError(null);
-      const notesData = await getNotes();
-      setNotes(notesData);
+      const response: PaginatedResponse<Note> = await getNotes({
+        ...searchParams,
+        page: page || currentPage,
+      });
+      setNotes(response.data);
+      setPagination({
+        current_page: response.current_page,
+        last_page: response.last_page,
+        total: response.total,
+      });
     } catch (err: any) {
       console.error('Error fetching notes:', err);
       setError('Greška pri učitavanju beležaka. Molimo pokušajte ponovo.');
@@ -59,6 +78,11 @@ const NotesPage: React.FC = () => {
     setSelectedNote(null);
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchNotes(undefined, page);
+  };
+
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -83,7 +107,7 @@ const NotesPage: React.FC = () => {
             <p className="text-red-800 dark:text-red-300">{error}</p>
           </div>
           <button
-            onClick={fetchNotes}
+            onClick={() => fetchNotes()}
             className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
           >
             Pokušaj ponovo
@@ -150,6 +174,18 @@ const NotesPage: React.FC = () => {
         onEdit={handleEditNote}
         onDelete={handleDeleteNote}
       />
+
+      {/* Pagination */}
+      {notes.length > 0 && (
+        <div className="mt-8">
+          <Pagination
+            currentPage={pagination.current_page}
+            lastPage={pagination.last_page}
+            total={pagination.total}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      )}
     </div>
   );
 };

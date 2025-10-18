@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import Input from '../components/Input';
-import { getTasks, type Task, type TaskSearchParams } from '../services/taskService';
+import Pagination from '../components/Pagination';
+import { getTasks, type Task, type TaskSearchParams, type PaginatedResponse } from '../services/taskService';
 
 const TasksPage: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -11,18 +12,36 @@ const TasksPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'incomplete'>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<{
+    current_page: number;
+    last_page: number;
+    total: number;
+  }>({
+    current_page: 1,
+    last_page: 1,
+    total: 0,
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
-  const fetchTasks = async (searchParams?: TaskSearchParams) => {
+  const fetchTasks = async (searchParams?: TaskSearchParams, page?: number) => {
     try {
       setLoading(true);
       setError(null);
-      const tasksData = await getTasks(searchParams);
-      setTasks(tasksData);
+      const response: PaginatedResponse<Task> = await getTasks({
+        ...searchParams,
+        page: page || currentPage,
+      });
+      setTasks(response.data);
+      setPagination({
+        current_page: response.current_page,
+        last_page: response.last_page,
+        total: response.total,
+      });
     } catch (err: any) {
       console.error('Error fetching tasks:', err);
       setError('Greška pri učitavanju zadataka. Molimo pokušajte ponovo.');
@@ -32,6 +51,7 @@ const TasksPage: React.FC = () => {
   };
 
   const handleSearch = () => {
+    setCurrentPage(1); // Reset to first page when searching
     const params: TaskSearchParams = {};
     
     if (searchTerm.trim()) {
@@ -62,7 +82,23 @@ const TasksPage: React.FC = () => {
   const clearFilters = () => {
     setSearchTerm('');
     setStatusFilter('all');
+    setCurrentPage(1);
     fetchTasks();
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    const params: TaskSearchParams = {};
+    
+    if (searchTerm.trim()) {
+      params.search = searchTerm.trim();
+    }
+    
+    if (statusFilter !== 'all') {
+      params.completed = statusFilter === 'completed';
+    }
+    
+    fetchTasks(params, page);
   };
 
   const handleDeleteTask = async (taskId: number) => {
@@ -216,6 +252,18 @@ const TasksPage: React.FC = () => {
               onDelete={handleDeleteTask}
             />
           ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {tasks.length > 0 && (
+        <div className="mt-8">
+          <Pagination
+            currentPage={pagination.current_page}
+            lastPage={pagination.last_page}
+            total={pagination.total}
+            onPageChange={handlePageChange}
+          />
         </div>
       )}
     </div>

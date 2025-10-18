@@ -22,11 +22,45 @@ export interface UpdateNoteData {
   content?: string;
 }
 
+// Interfejs za parametre pretrage i filtriranja
+export interface NoteSearchParams {
+  search?: string;
+  page?: number;
+}
+
+// Interfejs za paginirani odgovor
+export interface PaginatedResponse<T> {
+  data: T[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+
 // funkcija za dobavljanje svih beležaka
-export const getNotes = async (): Promise<Note[]> => {
-  const response = await api.get('/notes');
-  // Backend vraća paginirane podatke, uzimamo samo data array
-  return response.data.data.data;
+export const getNotes = async (params?: NoteSearchParams): Promise<PaginatedResponse<Note>> => {
+  const queryParams = new URLSearchParams();
+  
+  if (params?.search) {
+    queryParams.append('search', params.search);
+  }
+  
+  if (params?.page) {
+    queryParams.append('page', params.page.toString());
+  }
+  
+  const queryString = queryParams.toString();
+  const url = queryString ? `/notes?${queryString}` : '/notes';
+  
+  const response = await api.get(url);
+  // Backend vraća paginirane podatke
+  return {
+    data: response.data.data.data,
+    current_page: response.data.data.current_page,
+    last_page: response.data.data.last_page,
+    per_page: response.data.data.per_page,
+    total: response.data.data.total,
+  };
 };
 
 // funkcija za kreiranje nove beleške
