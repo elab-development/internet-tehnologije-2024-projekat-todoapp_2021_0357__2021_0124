@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Pagination from '../components/Pagination';
+import useApi from '../hooks/useApi';
 import { getTasks, type Task, type TaskSearchParams, type PaginatedResponse } from '../services/taskService';
 
 const TasksPage: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'incomplete'>('all');
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,34 +22,8 @@ const TasksPage: React.FC = () => {
   });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchTasks = async (searchParams?: TaskSearchParams, page?: number) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response: PaginatedResponse<Task> = await getTasks({
-        ...searchParams,
-        page: page || currentPage,
-      });
-      setTasks(response.data);
-      setPagination({
-        current_page: response.current_page,
-        last_page: response.last_page,
-        total: response.total,
-      });
-    } catch (err: any) {
-      console.error('Error fetching tasks:', err);
-      setError('Greška pri učitavanju zadataka. Molimo pokušajte ponovo.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSearch = () => {
-    setCurrentPage(1); // Reset to first page when searching
+  // api poziv funkcije
+  const createApiCall = useCallback(() => {
     const params: TaskSearchParams = {};
     
     if (searchTerm.trim()) {
@@ -62,7 +34,32 @@ const TasksPage: React.FC = () => {
       params.completed = statusFilter === 'completed';
     }
     
-    fetchTasks(params);
+    params.page = currentPage;
+    
+    return getTasks(params);
+  }, [searchTerm, statusFilter, currentPage]);
+
+  // korišćenje useApi hook-a
+  const { data: tasksResponse, loading, error, execute, reset } = useApi<PaginatedResponse<Task>>(createApiCall);
+
+  useEffect(() => {
+    execute();
+  }, [execute]);
+
+  // ažuriranje paginacije kada se promeni odgovor
+  useEffect(() => {
+    if (tasksResponse) {
+      setPagination({
+        current_page: tasksResponse.current_page,
+        last_page: tasksResponse.last_page,
+        total: tasksResponse.total,
+      });
+    }
+  }, [tasksResponse]);
+
+  const handleSearch = () => {
+    setCurrentPage(1); // reset na prvu stranicu rezultata
+    execute();
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,22 +80,12 @@ const TasksPage: React.FC = () => {
     setSearchTerm('');
     setStatusFilter('all');
     setCurrentPage(1);
-    fetchTasks();
+    reset();
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    const params: TaskSearchParams = {};
-    
-    if (searchTerm.trim()) {
-      params.search = searchTerm.trim();
-    }
-    
-    if (statusFilter !== 'all') {
-      params.completed = statusFilter === 'completed';
-    }
-    
-    fetchTasks(params, page);
+    execute();
   };
 
   const handleDeleteTask = async (taskId: number) => {
@@ -106,11 +93,11 @@ const TasksPage: React.FC = () => {
       try {
         const { deleteTask } = await import('../services/taskService');
         await deleteTask(taskId);
-        // Ukloni zadatak iz liste bez ponovnog učitavanja
-        setTasks(tasks.filter(task => task.id !== taskId));
+        // Ponovo učitaj zadatke nakon brisanja
+        execute();
       } catch (err: any) {
         console.error('Error deleting task:', err);
-        setError('Greška pri brisanju zadatka. Molimo pokušajte ponovo.');
+        // Error će biti prikazan kroz useApi hook
       }
     }
   };
@@ -143,7 +130,7 @@ const TasksPage: React.FC = () => {
             <p className="text-red-800 dark:text-red-300">{error}</p>
           </div>
           <button
-            onClick={() => fetchTasks()}
+            onClick={execute}
             className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
           >
             Pokušaj ponovo
@@ -225,7 +212,7 @@ const TasksPage: React.FC = () => {
         </div>
       </div>
 
-      {tasks.length === 0 ? (
+      {!tasksResponse?.data || tasksResponse.data.length === 0 ? (
         <div className="text-center py-12">
           <svg className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -244,7 +231,7 @@ const TasksPage: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tasks.map((task) => (
+          {tasksResponse?.data.map((task) => (
             <Card
               key={task.id}
               task={task}
@@ -256,7 +243,7 @@ const TasksPage: React.FC = () => {
       )}
 
       {/* Pagination */}
-      {tasks.length > 0 && (
+      {tasksResponse?.data && tasksResponse.data.length > 0 && (
         <div className="mt-8">
           <Pagination
             currentPage={pagination.current_page}

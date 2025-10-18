@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import NoteCard from '../components/NoteCard';
 import NoteViewModal from '../components/NoteViewModal';
 import Button from '../components/Button';
 import Pagination from '../components/Pagination';
-import { getNotes, type Note, type NoteSearchParams, type PaginatedResponse } from '../services/noteService';
+import useApi from '../hooks/useApi';
+import { getNotes, type Note, type PaginatedResponse } from '../services/noteService';
 
 const NotesPage: React.FC = () => {
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,42 +22,39 @@ const NotesPage: React.FC = () => {
   });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchNotes();
-  }, []);
+  // kreiranje API poziva funkcije
+  const createApiCall = useCallback(() => {
+    return getNotes({ page: currentPage });
+  }, [currentPage]);
 
-  const fetchNotes = async (searchParams?: NoteSearchParams, page?: number) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response: PaginatedResponse<Note> = await getNotes({
-        ...searchParams,
-        page: page || currentPage,
-      });
-      setNotes(response.data);
+  // korišćenje useApi hook-a
+  const { data: notesResponse, loading, error, execute } = useApi<PaginatedResponse<Note>>(createApiCall);
+
+  useEffect(() => {
+    execute();
+  }, [execute]);
+
+  // ažuriranje paginacije kada se promeni odgovor
+  useEffect(() => {
+    if (notesResponse) {
       setPagination({
-        current_page: response.current_page,
-        last_page: response.last_page,
-        total: response.total,
+        current_page: notesResponse.current_page,
+        last_page: notesResponse.last_page,
+        total: notesResponse.total,
       });
-    } catch (err: any) {
-      console.error('Error fetching notes:', err);
-      setError('Greška pri učitavanju beležaka. Molimo pokušajte ponovo.');
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [notesResponse]);
 
   const handleDeleteNote = async (noteId: number) => {
     if (window.confirm('Da li ste sigurni da želite da obrišete ovu belešku?')) {
       try {
         const { deleteNote } = await import('../services/noteService');
         await deleteNote(noteId);
-        // Ukloni belešku iz liste bez ponovnog učitavanja
-        setNotes(notes.filter(note => note.id !== noteId));
+        // ponovo učitaj beleške nakon brisanja
+        execute();
       } catch (err: any) {
         console.error('Error deleting note:', err);
-        setError('Greška pri brisanju beleške. Molimo pokušajte ponovo.');
+        // error će biti prikazan kroz useApi hook
       }
     }
   };
@@ -80,7 +75,7 @@ const NotesPage: React.FC = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchNotes(undefined, page);
+    execute();
   };
 
   if (loading) {
@@ -107,7 +102,7 @@ const NotesPage: React.FC = () => {
             <p className="text-red-800 dark:text-red-300">{error}</p>
           </div>
           <button
-            onClick={() => fetchNotes()}
+            onClick={execute}
             className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
           >
             Pokušaj ponovo
@@ -135,7 +130,7 @@ const NotesPage: React.FC = () => {
         </Link>
       </div>
 
-      {notes.length === 0 ? (
+      {!notesResponse?.data || notesResponse.data.length === 0 ? (
         <div className="text-center py-12">
           <svg className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -154,7 +149,7 @@ const NotesPage: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {notes.map((note) => (
+          {notesResponse?.data.map((note: Note) => (
             <NoteCard
               key={note.id}
               note={note}
@@ -176,7 +171,7 @@ const NotesPage: React.FC = () => {
       />
 
       {/* Pagination */}
-      {notes.length > 0 && (
+      {notesResponse?.data && notesResponse.data.length > 0 && (
         <div className="mt-8">
           <Pagination
             currentPage={pagination.current_page}
