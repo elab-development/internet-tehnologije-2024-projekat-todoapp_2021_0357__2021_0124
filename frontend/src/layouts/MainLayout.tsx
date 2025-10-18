@@ -1,6 +1,7 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../hooks/useTheme';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 // layout za stranice gde je korisnik ulogovan
 const MainLayout = () => {
@@ -67,6 +68,10 @@ const MainLayout = () => {
           </div>
         </div>
       </nav>
+      
+      {/* Breadcrumbs */}
+      <Breadcrumbs />
+      
       {/* saaadržaaaj */}
       <main className="w-full py-6 px-4 sm:px-6 lg:px-8">
         <Outlet />
