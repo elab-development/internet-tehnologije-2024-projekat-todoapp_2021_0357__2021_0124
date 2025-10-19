@@ -6,11 +6,56 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA;
 
 class TaskController extends Controller
 {
     /**
-     * prikaz svih zadataka ulogovanog korisnika sa paginacijom, filtriranjem i pretragom
+     * @OA\Get(
+     *     path="/api/tasks",
+     *     summary="Prikaz svih zadataka korisnika",
+     *     tags={"Zadaci"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="completed",
+     *         in="query",
+     *         description="Filtriranje po statusu završetka",
+     *         required=false,
+     *         @OA\Schema(type="boolean", example=true)
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Pretraga po naslovu zadatka",
+     *         required=false,
+     *         @OA\Schema(type="string", example="važan zadatak")
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Broj stranice za paginaciju",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Zadaci uspešno učitani",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Zadaci uspešno učitani"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="current_page", type="integer"),
+     *                 @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Task")),
+     *                 @OA\Property(property="last_page", type="integer"),
+     *                 @OA\Property(property="per_page", type="integer"),
+     *                 @OA\Property(property="total", type="integer")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
      */
     public function index(Request $request)
     {
@@ -35,9 +80,40 @@ class TaskController extends Controller
         ]);
     }
 
-   
-     // kreiranje novog zadatka
-     
+    /**
+     * @OA\Post(
+     *     path="/api/tasks",
+     *     summary="Kreiranje novog zadatka",
+     *     tags={"Zadaci"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Podaci za kreiranje zadatka",
+     *         @OA\JsonContent(
+     *             required={"title"},
+     *             @OA\Property(property="title", type="string", example="Kupiti mleko"),
+     *             @OA\Property(property="is_completed", type="boolean", example=false),
+     *             @OA\Property(property="due_date", type="string", format="date", example="2024-12-31")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Zadatak uspešno kreiran",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Zadatak uspešno kreiran"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Task")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Greška pri validaciji"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -65,9 +141,36 @@ class TaskController extends Controller
         ], 201);
     }
 
-    
-     //prikaz određenog zadatka
-     
+    /**
+     * @OA\Get(
+     *     path="/api/tasks/{task}",
+     *     summary="Prikaz određenog zadatka",
+     *     tags={"Zadaci"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="task",
+     *         in="path",
+     *         description="ID zadatka",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Zadatak uspešno učitan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/Task")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Zadatak nije pronađen"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
+     */
     public function show(Request $request, string $id)
     {
         $task = $request->user()->tasks()->find($id);
@@ -83,8 +186,50 @@ class TaskController extends Controller
         ]);
     }
 
-    //ažuriranje zadatka
-     
+    /**
+     * @OA\Put(
+     *     path="/api/tasks/{task}",
+     *     summary="Ažuriranje zadatka",
+     *     tags={"Zadaci"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="task",
+     *         in="path",
+     *         description="ID zadatka",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Podaci za ažuriranje zadatka",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="title", type="string", example="Kupiti mleko"),
+     *             @OA\Property(property="is_completed", type="boolean", example=true),
+     *             @OA\Property(property="due_date", type="string", format="date", example="2024-12-31")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Zadatak uspešno ažuriran",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Zadatak uspešno ažuriran"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Task")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Zadatak nije pronađen"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Greška pri validaciji"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
+     */
     public function update(Request $request, string $id)
     {
         $task = $request->user()->tasks()->find($id);
@@ -116,9 +261,36 @@ class TaskController extends Controller
         ]);
     }
 
-   
-     // brisanje taska
-     
+    /**
+     * @OA\Delete(
+     *     path="/api/tasks/{task}",
+     *     summary="Brisanje zadatka",
+     *     tags={"Zadaci"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="task",
+     *         in="path",
+     *         description="ID zadatka",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Zadatak uspešno obrisan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Zadatak uspešno obrisan")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Zadatak nije pronađen"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
+     */
     public function destroy(Request $request, string $id)
     {
         $task = $request->user()->tasks()->find($id);
@@ -136,8 +308,44 @@ class TaskController extends Controller
         ]);
     }
 
-    //citanje zadataka za određenog korisnika (ali admin funkcija)
-    
+    /**
+     * @OA\Get(
+     *     path="/api/users/{user}/tasks",
+     *     summary="Prikaz zadataka određenog korisnika (Admin funkcija)",
+     *     tags={"Admin"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="user",
+     *         in="path",
+     *         description="ID korisnika",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Zadaci korisnika uspešno učitani",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Zadaci korisnika Pera Peric uspešno učitani"),
+     *             @OA\Property(property="user", ref="#/components/schemas/User"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="current_page", type="integer"),
+     *                 @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Task")),
+     *                 @OA\Property(property="last_page", type="integer"),
+     *                 @OA\Property(property="per_page", type="integer"),
+     *                 @OA\Property(property="total", type="integer")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Nemate dozvolu za pristup"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
+     */
     public function TasksOdUser(User $user)
     {
         $tasks = $user->tasks()->paginate(10);

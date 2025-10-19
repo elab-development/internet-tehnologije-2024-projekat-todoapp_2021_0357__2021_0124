@@ -6,11 +6,42 @@ use App\Models\Note;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA;
 
 class NoteController extends Controller
 {
     /**
-     * prikaz svih beleški ulogovanog korisnika sa paginacijom
+     * @OA\Get(
+     *     path="/api/notes",
+     *     summary="Prikaz svih beleški korisnika",
+     *     tags={"Beleške"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Broj stranice za paginaciju",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Beleške uspešno učitane",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Beleške uspešno učitane"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="current_page", type="integer"),
+     *                 @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Note")),
+     *                 @OA\Property(property="last_page", type="integer"),
+     *                 @OA\Property(property="per_page", type="integer"),
+     *                 @OA\Property(property="total", type="integer")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
      */
     public function index(Request $request)
     {
@@ -23,7 +54,37 @@ class NoteController extends Controller
     }
 
     /**
-     * kreiranje nove beleške
+     * @OA\Post(
+     *     path="/api/notes",
+     *     summary="Kreiranje nove beleške",
+     *     tags={"Beleške"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Podaci za kreiranje beleške",
+     *         @OA\JsonContent(
+     *             required={"title","content"},
+     *             @OA\Property(property="title", type="string", example="Moja beleška"),
+     *             @OA\Property(property="content", type="string", example="Sadržaj beleške...")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Beleška uspešno kreirana",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Beleška uspešno kreirana"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Note")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Greška pri validaciji"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -51,7 +112,34 @@ class NoteController extends Controller
     }
 
     /**
-     * prikaz određene beleške
+     * @OA\Get(
+     *     path="/api/notes/{note}",
+     *     summary="Prikaz određene beleške",
+     *     tags={"Beleške"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="note",
+     *         in="path",
+     *         description="ID beleške",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Beleška uspešno učitanа",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/Note")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Beleška nije pronađena"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
      */
     public function show(Request $request, string $id)
     {
@@ -69,7 +157,47 @@ class NoteController extends Controller
     }
 
     /**
-     * ažuriranje beleške
+     * @OA\Put(
+     *     path="/api/notes/{note}",
+     *     summary="Ažuriranje beleške",
+     *     tags={"Beleške"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="note",
+     *         in="path",
+     *         description="ID beleške",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Podaci za ažuriranje beleške",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="title", type="string", example="Ažurirana beleška"),
+     *             @OA\Property(property="content", type="string", example="Novi sadržaj beleške...")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Beleška uspešno ažurirana",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Beleška uspešno ažurirana"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Note")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Beleška nije pronađena"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Greška pri validaciji"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
      */
     public function update(Request $request, string $id)
     {
@@ -102,7 +230,34 @@ class NoteController extends Controller
     }
 
     /**
-     * brisanje beleške
+     * @OA\Delete(
+     *     path="/api/notes/{note}",
+     *     summary="Brisanje beleške",
+     *     tags={"Beleške"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="note",
+     *         in="path",
+     *         description="ID beleške",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Beleška uspešno obrisana",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Beleška uspešno obrisana")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Beleška nije pronađena"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
      */
     public function destroy(Request $request, string $id)
     {
@@ -121,8 +276,44 @@ class NoteController extends Controller
         ]);
     }
 
-    // čitanje beleški za određenog korisnika (ali admin funkcija)
-
+    /**
+     * @OA\Get(
+     *     path="/api/users/{user}/notes",
+     *     summary="Prikaz beleški određenog korisnika (Admin funkcija)",
+     *     tags={"Admin"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="user",
+     *         in="path",
+     *         description="ID korisnika",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Beleške korisnika uspešno učitane",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Beleške korisnika Pera Peric uspešno učitane"),
+     *             @OA\Property(property="user", ref="#/components/schemas/User"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="current_page", type="integer"),
+     *                 @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Note")),
+     *                 @OA\Property(property="last_page", type="integer"),
+     *                 @OA\Property(property="per_page", type="integer"),
+     *                 @OA\Property(property="total", type="integer")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Nemate dozvolu za pristup"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
+     */
     public function NotesOdUser(User $user)
     {
         $notes = $user->notes()->paginate(10);

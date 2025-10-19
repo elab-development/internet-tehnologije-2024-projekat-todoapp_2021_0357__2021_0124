@@ -1,0 +1,1224 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "poran.io API Dokumentacija",
+        "description": "Platforma za upravljanje sopstvenim vremenom",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://my-default-host.com",
+            "description": "Glavni API server"
+        }
+    ],
+    "paths": {
+        "/api/random-activity": {
+            "get": {
+                "tags": [
+                    "Aktivnosti"
+                ],
+                "summary": "Dobijanje nasumične aktivnosti",
+                "description": "Dobija nasumičnu aktivnost sa javnog API-ja. Ova ruta ne zahteva autentifikaciju.",
+                "operationId": "fc6ee90b1a67a5eefb2f25fe7652c996",
+                "responses": {
+                    "200": {
+                        "description": "Uspešno dobijena aktivnost",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "activity": {
+                                            "type": "string",
+                                            "example": "Learn a new programming language"
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "example": "education"
+                                        },
+                                        "participants": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "price": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 0.1
+                                        },
+                                        "link": {
+                                            "type": "string",
+                                            "example": ""
+                                        },
+                                        "key": {
+                                            "type": "string",
+                                            "example": "5881028"
+                                        },
+                                        "accessibility": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 0.2
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "API za aktivnosti trenutno nije dostupan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Nije moguće dobiti aktivnost"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "API za aktivnosti trenutno nije dostupan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Autentifikacija"
+                ],
+                "summary": "Registracija novog korisnika",
+                "operationId": "8a56853624e025573120a09a4c75d468",
+                "requestBody": {
+                    "description": "Podaci za registraciju",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Pera Peric"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "pera@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Uspešna registracija",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Korisnik uspešno registrovan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Greška pri validaciji"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Autentifikacija"
+                ],
+                "summary": "Prijava korisnika",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "requestBody": {
+                    "description": "Podaci za prijavu",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "pera@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Uspešna prijava",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Uspešna prijava"
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|abc123..."
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neispravni podaci za prijavu"
+                    },
+                    "422": {
+                        "description": "Greška pri validaciji"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Autentifikacija"
+                ],
+                "summary": "Odjava korisnika",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "responses": {
+                    "200": {
+                        "description": "Uspešna odjava",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Uspešna odjava"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notes": {
+            "get": {
+                "tags": [
+                    "Beleške"
+                ],
+                "summary": "Prikaz svih beleški korisnika",
+                "operationId": "9a95bde5931986ad60b9f7f414ec425e",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Broj stranice za paginaciju",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Beleške uspešno učitane",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Beleške uspešno učitane"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Note"
+                                                    }
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Beleške"
+                ],
+                "summary": "Kreiranje nove beleške",
+                "operationId": "d133c170557b4935898f2e444e0fd418",
+                "requestBody": {
+                    "description": "Podaci za kreiranje beleške",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Moja beleška"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Sadržaj beleške..."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Beleška uspešno kreirana",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Beleška uspešno kreirana"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Note"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Greška pri validaciji"
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notes/{note}": {
+            "get": {
+                "tags": [
+                    "Beleške"
+                ],
+                "summary": "Prikaz određene beleške",
+                "operationId": "e0f1599bca9af5cb49cb71f256ad31aa",
+                "parameters": [
+                    {
+                        "name": "note",
+                        "in": "path",
+                        "description": "ID beleške",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Beleška uspešno učitanа",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Note"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Beleška nije pronađena"
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Beleške"
+                ],
+                "summary": "Ažuriranje beleške",
+                "operationId": "a8fbf2764bddfa0b61a000b3d2b77721",
+                "parameters": [
+                    {
+                        "name": "note",
+                        "in": "path",
+                        "description": "ID beleške",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Podaci za ažuriranje beleške",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Ažurirana beleška"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Novi sadržaj beleške..."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Beleška uspešno ažurirana",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Beleška uspešno ažurirana"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Note"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Beleška nije pronađena"
+                    },
+                    "422": {
+                        "description": "Greška pri validaciji"
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Beleške"
+                ],
+                "summary": "Brisanje beleške",
+                "operationId": "7f894d7b4f10aa080ffb3a1b2ebc5281",
+                "parameters": [
+                    {
+                        "name": "note",
+                        "in": "path",
+                        "description": "ID beleške",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Beleška uspešno obrisana",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Beleška uspešno obrisana"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Beleška nije pronađena"
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{user}/notes": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Prikaz beleški određenog korisnika (Admin funkcija)",
+                "operationId": "a56b7351e1b030b003a2835b61681ccb",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID korisnika",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Beleške korisnika uspešno učitane",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Beleške korisnika Pera Peric uspešno učitane"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Note"
+                                                    }
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Nemate dozvolu za pristup"
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tasks": {
+            "get": {
+                "tags": [
+                    "Zadaci"
+                ],
+                "summary": "Prikaz svih zadataka korisnika",
+                "operationId": "471d938a3bfaeb6fbd981d7c3e2728b0",
+                "parameters": [
+                    {
+                        "name": "completed",
+                        "in": "query",
+                        "description": "Filtriranje po statusu završetka",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Pretraga po naslovu zadatka",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "važan zadatak"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Broj stranice za paginaciju",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Zadaci uspešno učitani",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Zadaci uspešno učitani"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Task"
+                                                    }
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Zadaci"
+                ],
+                "summary": "Kreiranje novog zadatka",
+                "operationId": "f803ebdb2300acdb7e93bbe8d0b9a2e8",
+                "requestBody": {
+                    "description": "Podaci za kreiranje zadatka",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Kupiti mleko"
+                                    },
+                                    "is_completed": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "due_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-31"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Zadatak uspešno kreiran",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Zadatak uspešno kreiran"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Task"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Greška pri validaciji"
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tasks/{task}": {
+            "get": {
+                "tags": [
+                    "Zadaci"
+                ],
+                "summary": "Prikaz određenog zadatka",
+                "operationId": "9736e8dac4ca267e196496c4b790c757",
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "description": "ID zadatka",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Zadatak uspešno učitan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Task"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Zadatak nije pronađen"
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Zadaci"
+                ],
+                "summary": "Ažuriranje zadatka",
+                "operationId": "4732012736ffb7728b7e6b7949d3c140",
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "description": "ID zadatka",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Podaci za ažuriranje zadatka",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Kupiti mleko"
+                                    },
+                                    "is_completed": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "due_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-31"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Zadatak uspešno ažuriran",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Zadatak uspešno ažuriran"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Task"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Zadatak nije pronađen"
+                    },
+                    "422": {
+                        "description": "Greška pri validaciji"
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Zadaci"
+                ],
+                "summary": "Brisanje zadatka",
+                "operationId": "3aa12cf460ff0476704f02693959d7de",
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "description": "ID zadatka",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Zadatak uspešno obrisan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Zadatak uspešno obrisan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Zadatak nije pronađen"
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{user}/tasks": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Prikaz zadataka određenog korisnika (Admin funkcija)",
+                "operationId": "49e1a783a3cc90c234124c05cb54992f",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID korisnika",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Zadaci korisnika uspešno učitani",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Zadaci korisnika Pera Peric uspešno učitani"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Task"
+                                                    }
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Nemate dozvolu za pristup"
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Note": {
+                "title": "Beleška",
+                "description": "Model beleške u aplikaciji",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Moja beleška"
+                    },
+                    "content": {
+                        "type": "string",
+                        "example": "Sadržaj beleške..."
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        },
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Tag": {
+                "title": "Tag",
+                "description": "Model taga za kategorizaciju beleški",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "važno"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Task": {
+                "title": "Zadatak",
+                "description": "Model zadatka u aplikaciji",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Kupiti mleko"
+                    },
+                    "is_completed": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "due_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-12-31",
+                        "nullable": true
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "Korisnik",
+                "description": "Model korisnika aplikacije",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Pera Peric"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "pera@example.com"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "user",
+                            "admin"
+                        ],
+                        "example": "user"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Unesite Bearer token dobijen pri prijavi",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Autentifikacija",
+            "description": "Operacije za registraciju, prijavu i odjavu korisnika"
+        },
+        {
+            "name": "Zadaci",
+            "description": "CRUD operacije za upravljanje zadacima"
+        },
+        {
+            "name": "Beleške",
+            "description": "CRUD operacije za upravljanje beleškama"
+        },
+        {
+            "name": "Aktivnosti",
+            "description": "Javne API operacije za dobijanje nasumičnih aktivnosti"
+        },
+        {
+            "name": "Admin",
+            "description": "Admin operacije za pristup podacima svih korisnika"
+        }
+    ]
+}

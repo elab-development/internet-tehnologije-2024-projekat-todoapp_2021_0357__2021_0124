@@ -8,6 +8,23 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use OpenApi\Annotations as OA;
+
+/**
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     title="Korisnik",
+ *     description="Model korisnika aplikacije",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="name", type="string", example="Pera Peric"),
+ *     @OA\Property(property="email", type="string", format="email", example="pera@example.com"),
+ *     @OA\Property(property="role", type="string", example="user", enum={"user", "admin"}),
+ *     @OA\Property(property="email_verified_at", type="string", format="date-time", nullable=true),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
 
 class User extends Authenticatable
 {

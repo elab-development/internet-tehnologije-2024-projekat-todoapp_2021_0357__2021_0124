@@ -5,6 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OpenApi\Annotations as OA;
+
+/**
+ * @OA\Schema(
+ *     schema="Task",
+ *     type="object",
+ *     title="Zadatak",
+ *     description="Model zadatka u aplikaciji",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="title", type="string", example="Kupiti mleko"),
+ *     @OA\Property(property="is_completed", type="boolean", example=false),
+ *     @OA\Property(property="due_date", type="string", format="date", nullable=true, example="2024-12-31"),
+ *     @OA\Property(property="user_id", type="integer", example=1),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
 
 class Task extends Model
 {

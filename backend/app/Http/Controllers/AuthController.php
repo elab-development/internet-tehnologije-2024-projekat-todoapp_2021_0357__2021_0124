@@ -8,11 +8,37 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA; 
 
 class AuthController extends Controller
 {
     /**
-     * registracija novog korisnika
+     * @OA\Post(
+     * path="/api/register",
+     * summary="Registracija novog korisnika",
+     * tags={"Autentifikacija"},
+     * @OA\RequestBody(
+     * required=true,
+     * description="Podaci za registraciju",
+     * @OA\JsonContent(
+     * required={"name","email","password"},
+     * @OA\Property(property="name", type="string", example="Pera Peric"),
+     * @OA\Property(property="email", type="string", format="email", example="pera@example.com"),
+     * @OA\Property(property="password", type="string", format="password", example="password123")
+     * )
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Uspešna registracija",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Korisnik uspešno registrovan")
+     * )
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Greška pri validaciji"
+     * )
+     * )
      */
     public function register(Request $request)
     {
@@ -46,7 +72,38 @@ class AuthController extends Controller
     }
 
     /**
-     * prijava korisnika
+     * @OA\Post(
+     *     path="/api/login",
+     *     summary="Prijava korisnika",
+     *     tags={"Autentifikacija"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Podaci za prijavu",
+     *         @OA\JsonContent(
+     *             required={"email","password"},
+     *             @OA\Property(property="email", type="string", format="email", example="pera@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Uspešna prijava",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Uspešna prijava"),
+     *             @OA\Property(property="user", type="object"),
+     *             @OA\Property(property="token", type="string", example="1|abc123..."),
+     *             @OA\Property(property="token_type", type="string", example="Bearer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neispravni podaci za prijavu"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Greška pri validaciji"
+     *     )
+     * )
      */
     public function login(Request $request)
     {
@@ -80,7 +137,23 @@ class AuthController extends Controller
     }
 
     /**
-     * odjava korisnika
+     * @OA\Post(
+     *     path="/api/logout",
+     *     summary="Odjava korisnika",
+     *     tags={"Autentifikacija"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Uspešna odjava",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Uspešna odjava")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Neautorizovan pristup"
+     *     )
+     * )
      */
     public function logout(Request $request)
     {
