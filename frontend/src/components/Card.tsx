@@ -15,8 +15,8 @@ const Card: React.FC<CardProps> = ({ task, onEdit, onDelete }) => {
 
   const getStatusColor = (isCompleted: boolean) => {
     return isCompleted 
-      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
-      : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' 
+      : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400';
   };
 
   const getStatusText = (isCompleted: boolean) => {
@@ -24,7 +24,7 @@ const Card: React.FC<CardProps> = ({ task, onEdit, onDelete }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6 border border-gray-200 dark:border-gray-700">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 p-6 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2">
           {task.title}
@@ -54,7 +54,7 @@ const Card: React.FC<CardProps> = ({ task, onEdit, onDelete }) => {
         {onEdit && (
           <button
             onClick={() => onEdit(task)}
-            className="px-3 py-1 bg-[#587792] text-white text-sm rounded hover:bg-blue-700 transition-colors"
+            className="px-3 py-1 bg-slate-600 text-white text-sm rounded hover:bg-slate-700 transition-colors duration-200"
           >
             Izmeni
           </button>
@@ -62,7 +62,7 @@ const Card: React.FC<CardProps> = ({ task, onEdit, onDelete }) => {
         {onDelete && (
           <button
             onClick={() => onDelete(task.id)}
-            className="px-3 py-1 bg-[#FF3366] text-white text-sm rounded hover:bg-red-700 transition-colors"
+            className="px-3 py-1 bg-rose-200 dark:bg-rose-800/30 text-rose-700 dark:text-rose-300 text-sm rounded hover:bg-rose-300 dark:hover:bg-rose-700/50 transition-colors duration-200 border border-rose-300 dark:border-rose-700"
           >
             Obriši
           </button>

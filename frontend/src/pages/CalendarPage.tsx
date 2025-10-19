@@ -133,7 +133,7 @@ const CalendarPage: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-600 mx-auto mb-4"></div>
             <p className="text-gray-600 dark:text-gray-400">Učitavanje kalendara...</p>
           </div>
         </div>
@@ -152,7 +152,7 @@ const CalendarPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Kalendar */}
         <div className="lg:col-span-2">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
             <style>{`
               .react-calendar {
                 width: 100%;
@@ -167,11 +167,12 @@ const CalendarPage: React.FC = () => {
                 font-weight: 600;
               }
               .react-calendar__tile--active {
-                background: #3b82f6 !important;
+                background: #475569 !important;
                 color: white !important;
               }
               .react-calendar__tile--now {
-                background: #dbeafe;
+                background: #f1f5f9;
+                border: 2px solid #475569;
               }
               .dark .react-calendar {
                 background: #1f2937;
@@ -181,7 +182,8 @@ const CalendarPage: React.FC = () => {
                 color: #f3f4f6;
               }
               .dark .react-calendar__tile--now {
-                background: #1e40af;
+                background: #334155;
+                border: 2px solid #64748b;
               }
               .dark .react-calendar__tile:enabled:hover {
                 background: #374151;
@@ -194,7 +196,7 @@ const CalendarPage: React.FC = () => {
               }
               .react-calendar__navigation button:enabled:hover,
               .react-calendar__navigation button:enabled:focus {
-                background-color: #e5e7eb;
+                background-color: #f1f5f9;
               }
               .dark .react-calendar__navigation button:enabled:hover,
               .dark .react-calendar__navigation button:enabled:focus {
@@ -211,15 +213,15 @@ const CalendarPage: React.FC = () => {
           </div>
 
           {/* Legenda */}
-          <div className="mt-4 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border border-gray-200 dark:border-gray-700">
+          <div className="mt-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Legenda:</h3>
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 bg-red-500 rounded-full"></span>
+                <span className="w-3 h-3 bg-rose-500 rounded-full"></span>
                 <span className="text-sm text-gray-600 dark:text-gray-400">Nezavršeni zadaci</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+                <span className="w-3 h-3 bg-emerald-500 rounded-full"></span>
                 <span className="text-sm text-gray-600 dark:text-gray-400">Završeni zadaci</span>
               </div>
             </div>
@@ -228,7 +230,7 @@ const CalendarPage: React.FC = () => {
 
         {/* Zadaci za izabrani datum */}
         <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700 sticky top-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700 sticky top-4">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               {value instanceof Date ? formatDate(value) : 'Izaberite datum'}
             </h2>
@@ -253,7 +255,7 @@ const CalendarPage: React.FC = () => {
                   <div
                     key={task.id}
                     onClick={() => handleTaskClick(task.id)}
-                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer hover:border-blue-500 dark:hover:border-blue-400"
+                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-all duration-200 cursor-pointer hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700/30"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -263,8 +265,8 @@ const CalendarPage: React.FC = () => {
                       </div>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         task.is_completed 
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
-                          : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                          ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' 
+                          : 'bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-400'
                       }`}>
                         {task.is_completed ? 'Završeno' : 'Nezavršeno'}
                       </span>
@@ -279,46 +281,46 @@ const CalendarPage: React.FC = () => {
 
       {/* Statistika */}
       <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400">Ukupno zadataka</p>
               <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{tasks.length}</p>
             </div>
-            <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
-              <svg className="w-8 h-8 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-full">
+              <svg className="w-8 h-8 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400">Završeni</p>
-              <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">
+              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-2">
                 {tasks.filter(t => t.is_completed).length}
               </p>
             </div>
-            <div className="bg-green-100 dark:bg-green-900 p-3 rounded-full">
-              <svg className="w-8 h-8 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-emerald-100 dark:bg-emerald-900/20 p-3 rounded-full">
+              <svg className="w-8 h-8 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400">Nezavršeni</p>
-              <p className="text-3xl font-bold text-red-600 dark:text-red-400 mt-2">
+              <p className="text-3xl font-bold text-rose-600 dark:text-rose-400 mt-2">
                 {tasks.filter(t => !t.is_completed).length}
               </p>
             </div>
-            <div className="bg-red-100 dark:bg-red-900 p-3 rounded-full">
-              <svg className="w-8 h-8 text-red-600 dark:text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-rose-100 dark:bg-rose-900/20 p-3 rounded-full">
+              <svg className="w-8 h-8 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>

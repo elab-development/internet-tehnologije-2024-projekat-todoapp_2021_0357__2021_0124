@@ -9,9 +9,21 @@ import useApi from '../hooks/useApi';
 import { getTasks, type Task, type TaskSearchParams, type PaginatedResponse } from '../services/taskService';
 
 const TasksPage: React.FC = () => {
+  // state za unos (ne pokreće pretragu)
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'incomplete'>('all');
-  const [currentPage, setCurrentPage] = useState(1);
+  
+  // state za stvarne parametre pretrage (pokreće API poziv)
+  const [searchParams, setSearchParams] = useState<{
+    search: string;
+    status: 'all' | 'completed' | 'incomplete';
+    page: number;
+  }>({
+    search: '',
+    status: 'all',
+    page: 1,
+  });
+  
   const [pagination, setPagination] = useState<{
     current_page: number;
     last_page: number;
@@ -27,25 +39,27 @@ const TasksPage: React.FC = () => {
   const createApiCall = useCallback(() => {
     const params: TaskSearchParams = {};
     
-    if (searchTerm.trim()) {
-      params.search = searchTerm.trim();
+    if (searchParams.search.trim()) {
+      params.search = searchParams.search.trim();
     }
     
-    if (statusFilter !== 'all') {
-      params.completed = statusFilter === 'completed';
+    if (searchParams.status !== 'all') {
+      params.completed = searchParams.status === 'completed';
     }
     
-    params.page = currentPage;
+    params.page = searchParams.page;
     
     return getTasks(params);
-  }, [searchTerm, statusFilter, currentPage]);
+  }, [searchParams]);
 
   // korišćenje useApi hook-a
-  const { data: tasksResponse, loading, error, execute, reset } = useApi<PaginatedResponse<Task>>(createApiCall);
+  const { data: tasksResponse, loading, error, execute } = useApi<PaginatedResponse<Task>>(createApiCall);
 
+ 
   useEffect(() => {
     execute();
-  }, [execute]);
+
+  }, [searchParams]);
 
   // ažuriranje paginacije kada se promeni odgovor
   useEffect(() => {
@@ -59,8 +73,12 @@ const TasksPage: React.FC = () => {
   }, [tasksResponse]);
 
   const handleSearch = () => {
-    setCurrentPage(1); // reset na prvu stranicu rezultata
-    execute();
+    // postavi parametre pretrage što će pokrenuti useEffect
+    setSearchParams({
+      search: searchTerm,
+      status: statusFilter,
+      page: 1, // reset na prvu stranicu rezultata
+    });
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,19 +92,31 @@ const TasksPage: React.FC = () => {
   };
 
   const handleStatusFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setStatusFilter(e.target.value as 'all' | 'completed' | 'incomplete');
+    const newStatus = e.target.value as 'all' | 'completed' | 'incomplete';
+    setStatusFilter(newStatus);
+
+    setSearchParams({
+      search: searchTerm,
+      status: newStatus,
+      page: 1, // reset na prvu stranicu kada se promeni filter
+    });
   };
 
   const clearFilters = () => {
     setSearchTerm('');
     setStatusFilter('all');
-    setCurrentPage(1);
-    reset();
+    setSearchParams({
+      search: '',
+      status: 'all',
+      page: 1,
+    });
   };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    execute();
+    setSearchParams({
+      ...searchParams,
+      page: page,
+    });
   };
 
   const handleDeleteTask = async (taskId: number) => {
@@ -113,7 +143,7 @@ const TasksPage: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-600 mx-auto mb-4"></div>
             <p className="text-gray-600 dark:text-gray-400">Učitavanje zadataka...</p>
           </div>
         </div>
@@ -151,7 +181,7 @@ const TasksPage: React.FC = () => {
           </h1>
         </div>
         <Link to="/app/tasks/create">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3">
+          <Button className="bg-slate-700 hover:bg-slate-800 text-white px-6 py-3">
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
@@ -161,7 +191,7 @@ const TasksPage: React.FC = () => {
       </div>
 
       {/* Search and Filter Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700 mb-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Search Input */}
           <div className="md:col-span-2">
@@ -183,7 +213,7 @@ const TasksPage: React.FC = () => {
             <select
               value={statusFilter}
               onChange={handleStatusFilterChange}
-              className="shadow appearance-none border border-gray-300 dark:border-gray-600 rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 dark:focus:border-blue-400"
+              className="shadow appearance-none border border-gray-300 dark:border-gray-600 rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-slate-500 dark:focus:border-slate-400 transition-colors duration-200"
             >
               <option value="all">Svi zadaci</option>
               <option value="completed">Završeni</option>
@@ -204,7 +234,7 @@ const TasksPage: React.FC = () => {
           <Button
             type="button"
             onClick={handleSearch}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
+            className="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -226,7 +256,7 @@ const TasksPage: React.FC = () => {
             Još uvek niste kreirali nijedan zadatak. Kliknite na dugme ispod da dodate svoj prvi zadatak.
           </p>
           <Link to="/app/tasks/create">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3">
+            <Button className="bg-slate-700 hover:bg-slate-800 text-white px-6 py-3">
               Kreiraj prvi zadatak
             </Button>
           </Link>

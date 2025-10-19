@@ -22,7 +22,7 @@ const MainLayout = () => {
             <div className="flex items-center">
               <Link
                 to="/app"
-                className="text-xl font-bold text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400"
+                className="text-xl font-bold text-gray-900 hover:text-slate-600 dark:text-white dark:hover:text-slate-300 transition-colors duration-200"
               >
                 poran.io 
               </Link>
@@ -30,31 +30,31 @@ const MainLayout = () => {
             <div className="flex items-center space-x-4">
               <Link
                 to="/app"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-blue-400"
+                className="text-gray-700 hover:text-slate-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-slate-200 transition-colors duration-200"
               >
                 Početna
               </Link>
               <Link
                 to="/app/notes"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-blue-400"
+                className="text-gray-700 hover:text-slate-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-slate-200 transition-colors duration-200"
               >
                 Beleške
               </Link>
               <Link
                 to="/app/tasks"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-blue-400"
+                className="text-gray-700 hover:text-slate-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-slate-200 transition-colors duration-200"
               >
                 Zadaci
               </Link>
               <Link
                 to="/app/calendar"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-blue-400"
+                className="text-gray-700 hover:text-slate-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-slate-200 transition-colors duration-200"
               >
                 Kalendar
               </Link>
               <Link
                 to="/app/activity"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-blue-400"
+                className="text-gray-700 hover:text-slate-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-slate-200 transition-colors duration-200"
               >
                 Aktivnosti
               </Link>
@@ -65,14 +65,14 @@ const MainLayout = () => {
               )}
               <button
                 onClick={toggleTheme}
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-blue-400"
+                className="text-gray-700 hover:text-slate-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-slate-200 transition-colors duration-200"
                 title={isDark ? 'Prebaci na light mode' : 'Prebaci na dark mode'}
               >
                 {isDark ? '☀️' : '🌙'}
               </button>
               <button
                 onClick={handleLogout}
-                className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-red-400"
+                className="text-gray-700 hover:text-rose-600 px-3 py-2 rounded-md text-sm font-medium dark:text-gray-300 dark:hover:text-rose-400 transition-colors duration-200"
               >
                 Odjava
               </button>

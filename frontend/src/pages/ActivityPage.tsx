@@ -50,12 +50,12 @@ const ActivityPage: React.FC = () => {
         </p>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 border border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 border border-gray-200 dark:border-gray-700">
         <div className="flex justify-center mb-6">
           <Button
             onClick={handleGetActivity}
             disabled={loading}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 text-lg"
+            className="bg-slate-700 hover:bg-slate-800 text-white px-8 py-3 text-lg"
           >
             {loading ? (
               <div className="flex items-center">
@@ -77,17 +77,17 @@ const ActivityPage: React.FC = () => {
                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
                   />
                 </svg>
-                Dobavi Random Aktivnost
+                Generiši random aktivnost
               </div>
             )}
           </Button>
         </div>
 
         {error && (
-          <div className="mt-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6">
+          <div className="mt-6 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-700 rounded-lg p-6">
             <div className="flex items-center">
               <svg 
-                className="w-6 h-6 text-red-600 dark:text-red-400 mr-3" 
+                className="w-6 h-6 text-rose-600 dark:text-rose-400 mr-3" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -99,7 +99,7 @@ const ActivityPage: React.FC = () => {
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
                 />
               </svg>
-              <p className="text-red-800 dark:text-red-300">{error}</p>
+              <p className="text-rose-800 dark:text-rose-300">{error}</p>
             </div>
           </div>
         )}
@@ -107,20 +107,20 @@ const ActivityPage: React.FC = () => {
         {activity && shouldFetch && !loading && (
           <div className="mt-6 space-y-6">
             <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-              <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-6 mb-6">
+              <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-6 mb-6">
                 <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
                   {activity.activity}
                 </h2>
-                <span className="inline-block px-3 py-1 bg-indigo-600 text-white text-sm rounded-full">
+                <span className="inline-block px-3 py-1 bg-slate-700 text-white text-sm rounded-full">
                   {activity.type}
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                  <div className="flex items-center mb-2">
+              <div className="flex justify-center">
+                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-6 max-w-xs w-full">
+                  <div className="flex items-center justify-center mb-3">
                     <svg 
-                      className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" 
+                      className="w-6 h-6 text-gray-600 dark:text-gray-400 mr-2" 
                       fill="none" 
                       stroke="currentColor" 
                       viewBox="0 0 24 24"
@@ -136,42 +136,17 @@ const ActivityPage: React.FC = () => {
                       Broj učesnika
                     </h3>
                   </div>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white text-center">
                     {activity.participants}
                   </p>
                 </div>
-
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                  <div className="flex items-center mb-2">
-                    <svg 
-                      className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
-                      />
-                    </svg>
-                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Cena
-                    </h3>
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {activity.price === 0 ? 'Besplatno' : `${(activity.price * 100).toFixed(0)}%`}
-                  </p>
-                </div>
-
               </div>
 
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-3">
                 <Button
                   onClick={handleAddToTasks}
                   disabled={isCreatingTask}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3"
                 >
                   {isCreatingTask ? (
                     <div className="flex items-center">
@@ -203,7 +178,7 @@ const ActivityPage: React.FC = () => {
                     href={activity.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    className="inline-flex items-center justify-center px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors duration-200"
                   >
                     <svg 
                       className="w-5 h-5 mr-2" 
@@ -248,10 +223,10 @@ const ActivityPage: React.FC = () => {
         )}
       </div>
 
-      <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+      <div className="mt-6 bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
         <div className="flex">
           <svg 
-            className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3 flex-shrink-0 mt-0.5" 
+            className="w-5 h-5 text-slate-600 dark:text-slate-400 mr-3 flex-shrink-0 mt-0.5" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -264,11 +239,11 @@ const ActivityPage: React.FC = () => {
             />
           </svg>
           <div>
-            <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-1">
+            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
               O ovoj funkcionalnosti
             </h3>
-            <p className="text-sm text-blue-800 dark:text-blue-400">
-              Ova stranica koristi Bored API preko našeg backend servisa da bi vam predložila random aktivnosti koje možete probati kada vam je dosadno. Kliknite na dugme koliko god puta želite da dobijete nove ideje!
+            <p className="text-sm text-slate-700 dark:text-slate-300">
+              poran.io korisiti API sa boredAPI.com da bi Vam predložila interesantne aktivnosti za popunjavanje slobodnog vremena!
             </p>
           </div>
         </div>
