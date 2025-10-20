@@ -8,6 +8,7 @@ import { createNote, type CreateNoteData } from '../services/noteService';
 const CreateNotePage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [tagsInput, setTagsInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -32,6 +33,10 @@ const CreateNotePage: React.FC = () => {
       const noteData: CreateNoteData = {
         title: title.trim(),
         content: content.trim(),
+        tags: tagsInput
+          .split(',')
+          .map(t => t.trim())
+          .filter(t => t.length > 0),
       };
 
       await createNote(noteData);
@@ -98,6 +103,19 @@ const CreateNotePage: React.FC = () => {
             />
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Detaljno opišite Vašu belešku
+            </p>
+          </div>
+
+          <div>
+            <Input
+              type="text"
+              label="Tagovi (odvojeni zarezom)"
+              placeholder="npr: posao, ITEH, ideje"
+              value={tagsInput}
+              onChange={(e) => setTagsInput(e.target.value)}
+            />
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Unesite nazive tagova odvojene zarezima. Novi tagovi biće kreirani automatski.
             </p>
           </div>
 

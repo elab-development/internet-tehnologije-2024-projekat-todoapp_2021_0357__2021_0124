@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Note;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -45,7 +46,17 @@ class NoteController extends Controller
      */
     public function index(Request $request)
     {
-        $notes = $request->user()->notes()->paginate(10);
+        $query = $request->user()->notes()->with('tags');
+
+        // jednostavan filter po nazivu taga: ?tag=ime
+        if ($request->filled('tag')) {
+            $tagName = $request->query('tag');
+            $query->whereHas('tags', function ($q) use ($tagName) {
+                $q->where('name', $tagName);
+            });
+        }
+
+        $notes = $query->paginate(10);
         
         return response()->json([
             'message' => 'Beleške uspešno učitane',
@@ -91,6 +102,8 @@ class NoteController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'tags' => 'sometimes|array',
+            'tags.*' => 'string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -104,6 +117,24 @@ class NoteController extends Controller
             'title' => $request->title,
             'content' => $request->content,
         ]);
+
+        // Ako su prosleđeni tagovi kao imena, kreiraj ih po potrebi i poveži
+        if ($request->filled('tags') && is_array($request->tags)) {
+            $tagIds = collect($request->tags)
+                ->filter(fn ($name) => is_string($name) && trim($name) !== '')
+                ->map(function ($name) {
+                    return Tag::firstOrCreate(['name' => trim($name)])->id;
+                })
+                ->unique()
+                ->values()
+                ->all();
+
+            if (!empty($tagIds)) {
+                $note->tags()->sync($tagIds);
+            }
+        }
+
+        $note->load('tags');
 
         return response()->json([
             'message' => 'Beleška uspešno kreirana',
@@ -143,7 +174,7 @@ class NoteController extends Controller
      */
     public function show(Request $request, string $id)
     {
-        $note = $request->user()->notes()->find($id);
+        $note = $request->user()->notes()->with('tags')->find($id);
 
         if (!$note) {
             return response()->json([
@@ -212,6 +243,8 @@ class NoteController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'sometimes|string|max:255',
             'content' => 'sometimes|string',
+            'tags' => 'sometimes|array',
+            'tags.*' => 'string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -222,6 +255,22 @@ class NoteController extends Controller
         }
 
         $note->update($request->only(['title', 'content']));
+
+        // ako su prosleđeni tagovi, ažuriraj pivot
+        if ($request->has('tags') && is_array($request->tags)) {
+            $tagIds = collect($request->tags)
+                ->filter(fn ($name) => is_string($name) && trim($name) !== '')
+                ->map(function ($name) {
+                    return Tag::firstOrCreate(['name' => trim($name)])->id;
+                })
+                ->unique()
+                ->values()
+                ->all();
+
+            $note->tags()->sync($tagIds);
+        }
+
+        $note->load('tags');
 
         return response()->json([
             'message' => 'Beleška uspešno ažurirana',
@@ -316,7 +365,7 @@ class NoteController extends Controller
      */
     public function NotesOdUser(User $user)
     {
-        $notes = $user->notes()->paginate(10);
+        $notes = $user->notes()->with('tags')->paginate(10);
         
         return response()->json([
             'message' => "Beleške korisnika {$user->name} uspešno učitane",

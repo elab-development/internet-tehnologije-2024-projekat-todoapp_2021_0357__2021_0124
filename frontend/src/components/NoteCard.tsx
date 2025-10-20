@@ -32,6 +32,18 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onEdit, onDelete, onView }) =
         <div className="text-sm text-gray-600 dark:text-gray-400">
           <p className="line-clamp-3">{truncateContent(note.content)}</p>
         </div>
+        {Array.isArray(note.tags) && note.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {note.tags.map((tag) => (
+              <span
+                key={tag.id}
+                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
+              >
+                #{tag.name}
+              </span>
+            ))}
+          </div>
+        )}
         
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

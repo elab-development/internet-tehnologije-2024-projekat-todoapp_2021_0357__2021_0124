@@ -21,12 +21,14 @@ const NotesPage: React.FC = () => {
     last_page: 1,
     total: 0,
   });
+  const [selectedTag, setSelectedTag] = useState<string>('');
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
   const navigate = useNavigate();
 
   // kreiranje API poziva funkcije
   const createApiCall = useCallback(() => {
-    return getNotes({ page: currentPage });
-  }, [currentPage]);
+    return getNotes({ page: currentPage, tag: selectedTag || undefined });
+  }, [currentPage, selectedTag]);
 
   // korišćenje useApi hook-a
   const { data: notesResponse, loading, error, execute } = useApi<PaginatedResponse<Note>>(createApiCall);
@@ -43,6 +45,16 @@ const NotesPage: React.FC = () => {
         last_page: notesResponse.last_page,
         total: notesResponse.total,
       });
+      // izvući dostupne tagove iz pristiglih beleški (basic)
+      const tagsFromNotes = new Set<string>();
+      for (const n of notesResponse.data) {
+        if (Array.isArray(n.tags)) {
+          for (const t of n.tags) {
+            if (t && t.name) tagsFromNotes.add(t.name);
+          }
+        }
+      }
+      setAvailableTags(Array.from(tagsFromNotes).sort((a, b) => a.localeCompare(b)));
     }
   }, [notesResponse]);
 
@@ -77,6 +89,14 @@ const NotesPage: React.FC = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    execute();
+  };
+
+  const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setSelectedTag(value);
+    setCurrentPage(1);
+    // re-execute will happen due to dependency in createApiCall
     execute();
   };
 
@@ -121,6 +141,20 @@ const NotesPage: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Beleške
           </h1>
+          {/* jednostavan filter po tagu */}
+          <div className="mt-3 flex items-center gap-2">
+            <label className="text-sm text-gray-700 dark:text-gray-300">Filtriraj po tagu:</label>
+            <select
+              value={selectedTag}
+              onChange={handleTagChange}
+              className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+            >
+              <option value="">Svi tagovi</option>
+              {availableTags.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </div>
         </div>
         <Link to="/app/notes/create">
           <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3">

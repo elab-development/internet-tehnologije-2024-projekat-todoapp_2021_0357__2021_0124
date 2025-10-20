@@ -42,6 +42,20 @@ const NoteViewModal: React.FC<NoteViewModalProps> = ({
           </div>
         </div>
 
+        {/* Tags */}
+        {Array.isArray(note.tags) && note.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {note.tags.map((tag) => (
+              <span
+                key={tag.id}
+                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
+              >
+                #{tag.name}
+              </span>
+            ))}
+          </div>
+        )}
+
         {/* Note Metadata */}
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-4">

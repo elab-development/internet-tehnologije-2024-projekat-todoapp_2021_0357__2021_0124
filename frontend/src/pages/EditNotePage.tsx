@@ -12,6 +12,7 @@ const EditNotePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [tagsInput, setTagsInput] = useState('');
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -29,6 +30,9 @@ const EditNotePage: React.FC = () => {
       setNote(noteData);
       setTitle(noteData.title);
       setContent(noteData.content);
+      if (Array.isArray(noteData.tags)) {
+        setTagsInput(noteData.tags.map(t => t.name).join(', '));
+      }
     } catch (err: any) {
       console.error('Error fetching note:', err);
       setError('Greška pri učitavanju beleške. Molimo pokušajte ponovo.');
@@ -59,6 +63,10 @@ const EditNotePage: React.FC = () => {
       const updateData: UpdateNoteData = {
         title: title.trim(),
         content: content.trim(),
+        tags: tagsInput
+          .split(',')
+          .map(t => t.trim())
+          .filter(t => t.length > 0),
       };
 
       await updateNote(note.id, updateData);
@@ -159,6 +167,19 @@ const EditNotePage: React.FC = () => {
             />
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Detaljno opišite Vašu belešku
+            </p>
+          </div>
+
+          <div>
+            <Input
+              type="text"
+              label="Tagovi (odvojeni zarezom)"
+              placeholder="npr: škola, ITEH, ideje"
+              value={tagsInput}
+              onChange={(e) => setTagsInput(e.target.value)}
+            />
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Unesite nazive tagova odvojene zarezima. Novi tagovi biće kreirani automatski.
             </p>
           </div>
 

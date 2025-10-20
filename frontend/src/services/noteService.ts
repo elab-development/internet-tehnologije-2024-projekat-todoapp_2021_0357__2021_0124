@@ -6,6 +6,7 @@ export interface Note {
   title: string;
   content: string;
   user_id: number;
+  tags?: { id: number; name: string }[];
   created_at: string;
   updated_at: string;
 }
@@ -14,18 +15,23 @@ export interface Note {
 export interface CreateNoteData {
   title: string;
   content: string;
+  // optional array of tag names to attach
+  tags?: string[];
 }
 
 // Interfejs za ažuriranje beleške
 export interface UpdateNoteData {
   title?: string;
   content?: string;
+  // optional array of tag names to replace current tags
+  tags?: string[];
 }
 
 // Interfejs za parametre pretrage i filtriranja
 export interface NoteSearchParams {
   search?: string;
   page?: number;
+  tag?: string;
 }
 
 // Interfejs za paginirani odgovor
@@ -47,6 +53,9 @@ export const getNotes = async (params?: NoteSearchParams): Promise<PaginatedResp
   
   if (params?.page) {
     queryParams.append('page', params.page.toString());
+  }
+  if (params?.tag) {
+    queryParams.append('tag', params.tag);
   }
   
   const queryString = queryParams.toString();
